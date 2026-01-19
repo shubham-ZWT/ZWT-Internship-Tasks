@@ -205,3 +205,47 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+
+WITH DepartmentScores AS(
+SELECT departments.dept_name, ( (AVG(employee.salary) * 0.3) + (SUM(projects.budget) * 0.4) + (SUM(employee_projects.hours_worked) * 0.3)) AS "Score" FROM employee_projects 
+JOIN projects ON projects.project_id = employee_projects.project_id 
+JOIN employee ON employee.id = employee_projects.emp_id 
+JOIN departments ON departments.dept_id = employee.dept_id 
+GROUP BY departments.dept_name
+)
+SELECT 
+    dept_name,
+    RANK() OVER (ORDER BY Score DESC) AS rank
+FROM DepartmentScores;
+
+
+
+// bulk assing Projects
+BEGIN
+	
+   	DECLARE empID INT;
+    DECLARE done INT DEFAULT 0;
+    DECLARE id_exists INT DEFAULT 0;
+    
+    DECLARE EmpCursor CURSOR FOR
+    SELECT id FROM employee WHERE employee.dept_id = in_dept_id;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+    
+    OPEN EmpCursor;
+   
+    REPEAT
+    	FETCH EmpCursor INTO empID;
+        IF NOT done THEN
+        	IF EXISTS (SELECT 1 FROM employee_projects WHERE employee_projects.emp_id=empID AND 									employee_projects.project_id = in_project_id ) THEN
+    			SET id_exists = -1;
+
+            ELSE 
+    			INSERT INTO employee_projects (emp_id, project_id, hours_worked, role) VALUES 											(empID,in_project_id,0,"Contributor");
+                
+			END IF;
+		END IF;
+	UNTIL done END REPEAT;
+    CLOSE EmpCursor;
+END

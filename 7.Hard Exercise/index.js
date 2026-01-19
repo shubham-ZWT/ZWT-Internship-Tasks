@@ -7,6 +7,8 @@ const authMiddleware = require("./Middlewares/auth.middleware");
 const authorizeRoles = require("./Middlewares/role.middleware");
 const rateLimit = require("express-rate-limit");
 
+const { change_emp_state } = require("./utils/change_emp_state");
+
 const app = express();
 const PORT = process.env.PORT;
 
@@ -86,6 +88,16 @@ app.post(
     res.status(200).json({ message: "Ok to Onboard" });
   }
 );
+
+//Employee Change Status
+app.post("/change-emp-state", async (req, res) => {
+  const { emp_id, new_state } = req.body;
+  console.log(emp_id, new_state);
+  console.log("yes here to change the state");
+  await change_emp_state(req, res);
+});
+
+//bluk project assign
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

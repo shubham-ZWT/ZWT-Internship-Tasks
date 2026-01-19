@@ -46,4 +46,27 @@ addProject = async (req, res) => {
   }
 };
 
-module.exports = { addProject };
+bulkAssign = async (req, res) => {
+  console.log("here to bulk assign");
+  const { proj_id, dept_id } = req.body;
+  const connection = await pool.getConnection();
+  console.log(proj_id, dept_id);
+  const data = await connection.query(
+    "CALL assign_project_bulk (?,?)",
+    [proj_id, dept_id],
+    (err) => {
+      console.error(err);
+    }
+  );
+
+  console.log(data);
+  // for (const r of data[0]) {
+  //   console.log(r.id);
+  // }
+
+  res.json({
+    message: `Bulk assign completed for ProjectID ${proj_id} and departmentID ${dept_id}`,
+  });
+};
+
+module.exports = { addProject, bulkAssign };
