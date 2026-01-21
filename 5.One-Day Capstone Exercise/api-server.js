@@ -145,7 +145,7 @@ app.post("/api/employees", (req, res) => {
         console.log(result);
         res.json({ message: `User Inserted` });
       }
-    }
+    },
   );
 });
 
@@ -165,7 +165,7 @@ app.put("/api/employees/:id", (req, res) => {
         console.log(employee);
         res.json({ message: "User Updated" });
       }
-    }
+    },
   );
 });
 
@@ -261,7 +261,7 @@ app.post("/api/employees/onboard", uploadSingle, (req, res) => {
           image: imageFile_path,
         });
       });
-    }
+    },
   );
 });
 
