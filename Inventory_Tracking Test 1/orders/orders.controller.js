@@ -5,22 +5,26 @@ exports.placeOrders = (req, res) => {
   const { customer_name, warehouse_id, items } = req.body;
   console.log(JSON.stringify(items));
   let sql = "CALL place_Order (?,?,?,@result)";
-  conn.query(sql, [customer_name, warehouse_id, JSON.stringify(items)], (err, result) => {
-    if (err) {
-      console.error(err);
-    } else {
-      conn.query("SELECT @result AS result", (err, rows) => {
-        if (err) {
-          console.error(err);
-        } else {
-          const result = rows[0].result;
-          console.log(result);
-        }
-      });
-    }
-  });
-
-  res.status(200).json({ message: "Ok from post orders" });
+  conn.query(
+    sql,
+    [customer_name, warehouse_id, JSON.stringify(items)],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+      } else {
+        conn.query("SELECT @result AS result", (err, rows) => {
+          if (err) {
+            console.error(err);
+            res.status(400).json({ message: "Failed to Place the Order" });
+          } else {
+            const result = rows[0].result;
+            console.log(result);
+            res.status(200).json({ message: "success", orderID: result });
+          }
+        });
+      }
+    },
+  );
 };
 
 exports.getOrders = (req, res) => {
@@ -28,6 +32,7 @@ exports.getOrders = (req, res) => {
   conn.query("CALL getallOrders", (err, result) => {
     if (err) {
       console.error(err);
+      res.status(400).json({ message: "Error while fetching orders" });
     }
     res.status(200).json({ orders: result[0] });
   });
