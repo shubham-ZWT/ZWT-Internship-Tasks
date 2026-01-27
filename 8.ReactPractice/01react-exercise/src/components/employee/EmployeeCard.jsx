@@ -17,7 +17,7 @@ function EmployeeCard({ name, isActive = true, email, salary, hireDate }) {
         style={{
           border: "3px solid black",
           padding: "10px 20px",
-          width: "350px",
+          width: "300px",
         }}
       >
         <h2>{name}</h2>
