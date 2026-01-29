@@ -13,6 +13,7 @@ export default function RandomUserApi() {
   const [error, setError] = useState(false);
 
   let retries = 3;
+
   const fetchUser = async () => {
     try {
       setIsLoading(true);
@@ -40,13 +41,18 @@ export default function RandomUserApi() {
       console.error(error);
     }
   };
-
   useEffect(() => {
     fetchUser();
   }, []);
   return (
     <>
-      <div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         {isLoading ? (
           <div>
             {" "}
@@ -54,16 +60,49 @@ export default function RandomUserApi() {
           </div>
         ) : (
           <div>
-            <h2>Random User Data</h2>
-            <p>Name : {userData.name}</p>
-            <p>Email : {userData.email}</p>
-            <label htmlFor="profile"></label>
-            <img src={userData.picture} alt="User Profile Picture" />
-
-            <button onClick={fetchUser}>Get new User</button>
+            <h2 style={{ textAlign: "center" }}>Random User Data</h2>
+            <div
+              style={{
+                backgroundColor: "#ACBAC4",
+                color: "#30364F",
+              
+                borderRadius: "20px",
+                padding:"10px"
+              }}
+            >
+              <div
+                style={{ display: "flex", flexDirection: "row", gap: "10px" }}
+              >
+                <img
+                  src={userData.picture}
+                  alt="User Profile Picture"
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    borderRadius: "50px",
+                  }}
+                />
+                <div>
+                  <p>Name : {userData.name}</p>
+                  <p>Email : {userData.email}</p>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={fetchUser}
+              style={{
+                backgroundColor: "#E5D9B6",
+                borderRadius: "10px",
+                padding: "5px",
+                marginTop: "10px",
+                borderColor:"#30364F"
+              }}
+            >
+              Get new User
+            </button>
+            <p>{error}</p>
           </div>
         )}
-        <p>{error}</p>
       </div>
     </>
   );

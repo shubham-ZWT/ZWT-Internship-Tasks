@@ -10,7 +10,7 @@ export default function EmployeeForm() {
     hireDate: "",
   });
   const isValid =
-    form.firstName !== "" &&
+    form.fir !== "" &&
     form.lastName !== "" &&
     form.email !== "" &&
     form.salary !== "" &&

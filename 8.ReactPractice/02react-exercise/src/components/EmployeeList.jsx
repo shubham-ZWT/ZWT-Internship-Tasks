@@ -79,34 +79,37 @@ export default function EmployeeList() {
             </tr>
           </thead>
 
-          {filteredEmployees.map((e) => (
-            <tr
-              key={e.id}
-              style={
-                Number(e.id) % 2 === 0
-                  ? { backgroundColor: "white" }
-                  : { backgroundColor: "black", color: "white" }
-              }
-            >
-              <td>{e.id}</td>
-              <td>{e.name}</td>
-              <td>{e.email}</td>
-              <td>{e.department}</td>
-              <td>{e.salary}</td>
-            </tr>
-          ))}
+          <tbody>
+            {filteredEmployees.map((e) => (
+              <tr
+                key={e.id}
+                style={
+                  Number(e.id) % 2 === 0
+                    ? { backgroundColor: "white" }
+                    : { backgroundColor: "black", color: "white" }
+                }
+              >
+                <td>{e.id}</td>
+                <td>{e.name}</td>
+                <td>{e.email}</td>
+                <td>{e.department}</td>
+                <td>{e.salary}</td>
+              </tr>
+            ))}
 
-          <tr>
-            <td colSpan="3">
-              Total Employee : {filteredEmployees.length} of {employees.length}
-            </td>
-            <td colSpan={2}>Total Salary : {totalSalary}</td>
-          </tr>
-          {filteredEmployees.length === 0 && (
             <tr>
-              <td colSpan={5}>No Employees Found</td>
+              <td colSpan="3">
+                Total Employee : {filteredEmployees.length} of{" "}
+                {employees.length}
+              </td>
+              <td colSpan={2}>Total Salary : {totalSalary}</td>
             </tr>
-          )}
+            {filteredEmployees.length === 0 && (
+              <tr>
+                <td colSpan={5}>No Employees Found</td>
+              </tr>
+            )}
+          </tbody>
         </table>
       </div>
     </>

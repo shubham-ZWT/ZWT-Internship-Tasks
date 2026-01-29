@@ -6,6 +6,7 @@ const path = require("path");
 const { fileURLToPath } = require("url");
 const rateLimit = require("express-rate-limit");
 // const redis = require("redis");
+const cors = require("cors");
 
 const { mkConfig, generateCsv, asString } = require("export-to-csv");
 const fs = require("fs");
@@ -26,7 +27,7 @@ const PORT = 3000;
 //rate limiting implementation
 const limiter = rateLimit({
   windowMs: 2 * 60 * 1000,
-  max: 10,
+  max: 100,
   message: "Too many requests from this IP, please try again after 2 minutes",
 });
 
@@ -96,13 +97,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
+
 app.get("/", (req, res) => {
   console.log("Req received");
   res.status(200).json({ message: "you are at home" });
 });
 
 app.get("/api/employees", async (req, res) => {
-  let sql = "select * from employees";
+  console.log("req received");
+  let sql = "select * from employee";
   con.query(sql, (err, result) => {
     if (err) {
       console.error(err);
@@ -114,27 +123,27 @@ app.get("/api/employees", async (req, res) => {
 
 app.get("/api/employees/:id", (req, res) => {
   let id = req.params.id;
+  console.log("req received");
   console.log(id);
   // const user = client.get(id, redis.print);
-  if (user) {
-    res.status(200).json(user);
-  } else {
-    let sql = "select * from employees where id=?";
-    con.query(sql, [Number(id)], (err, result) => {
-      if (err) {
-        console.error(err);
-        res.json({ message: "User not Found" });
-      } else {
-        res.status(200).json(result);
-      }
-    });
-  }
+
+  let sql = "select * from employee where id=?";
+  con.query(sql, [Number(id)], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.json({ message: "User not Found" });
+    } else {
+      res.status(200).json(result);
+    }
+  });
 });
 
 app.post("/api/employees", (req, res) => {
+  console.log("req received");
   let { first_name, last_name, email, hire_date, salary } = req.body;
+  console.log(first_name, last_name, email, hire_date, salary);
   let sql =
-    "INSERT INTO employees (first_name, last_name, email, hire_date, salary) VALUES (?,?,?,?,?)";
+    "INSERT INTO employee (first_name, last_name, email, hire_date, salary) VALUES (?,?,?,?,?)";
   con.query(
     sql,
     [first_name, last_name, email, hire_date, salary],
@@ -143,7 +152,7 @@ app.post("/api/employees", (req, res) => {
         console.error(err);
       } else {
         console.log(result);
-        res.json({ message: `User Inserted` });
+        res.json({ message: `User Inserted`, success: true });
       }
     },
   );
@@ -153,7 +162,8 @@ app.put("/api/employees/:id", (req, res) => {
   let id = req.params.id;
   let { first_name, last_name, email, hire_date, salary } = req.body;
   console.log(req.body);
-  let sql = `UPDATE employees SET first_name = ?, last_name= ?, email = ?, hire_date = ?, salary= ? WHERE id=?`;
+  console.log(id);
+  let sql = `UPDATE employee SET first_name = ?, last_name= ?, email = ?, hire_date = ?, salary= ? WHERE id=?`;
   con.query(
     sql,
     [first_name, last_name, email, hire_date, salary, id],
@@ -163,7 +173,7 @@ app.put("/api/employees/:id", (req, res) => {
       } else {
         const employee = result[0];
         console.log(employee);
-        res.json({ message: "User Updated" });
+        res.json({ message: "User Updated", success: true });
       }
     },
   );
@@ -172,7 +182,7 @@ app.put("/api/employees/:id", (req, res) => {
 app.delete("/api/employees/:id", (req, res) => {
   let id = req.params.id;
   console.log(id);
-  let sql = "DELETE from employees where id=?";
+  let sql = "DELETE from employee where id=?";
   con.query(sql, [Number(id)], (err, result) => {
     if (err) {
       res.json({ message: "User not Found" });
@@ -300,6 +310,50 @@ app.get("/users/csv", (req, res) => {
         console.log(filePath);
         res.status(200).sendFile(filePath);
       });
+    }
+  });
+});
+
+app.get("/api/departments", (req, res) => {
+  console.log("Department req ");
+  const sql = "SELECT dept_id, dept_name, location from departments";
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log(result);
+      res.status(200).json(result);
+    }
+  });
+});
+
+app.get("/api/departments/:id", (req, res) => {
+  const id = req.params.id;
+  const sql =
+    "SELECT employee.id,employee.first_name,employee.email,employee.salary, employee.hire_date FROM employee WHERE dept_id= ?";
+
+  con.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log(result);
+      res.status(200).json(result);
+    }
+  });
+});
+
+// Auth for the React Practice
+app.post("/api/login", (req, res) => {
+  const { email, password } = req.body;
+  console.log(req.body);
+  sql = "SELECT email, password FROM users where email=?";
+  con.query(sql, [email], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(400).json({ data: err, success: false });
+    } else {
+      console.log(result);
+      res.status(200).json({ data: result, success: true });
     }
   });
 });
