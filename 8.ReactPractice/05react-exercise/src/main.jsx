@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import AuthProvider from "./contexts/AuthProvider.jsx";
 import ThemeProvider from "./contexts/ThemeProvider.jsx";
 import CartProvider from "./contexts/CartProvider.jsx";
+import EmployeeProvider from "./contexts/EmployeeProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -13,7 +14,9 @@ createRoot(document.getElementById("root")).render(
       <AuthProvider>
         <CartProvider>
           <ThemeProvider>
-            <App />
+            <EmployeeProvider>
+              <App />
+            </EmployeeProvider>
           </ThemeProvider>
         </CartProvider>
       </AuthProvider>
