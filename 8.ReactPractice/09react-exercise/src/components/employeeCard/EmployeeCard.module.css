@@ -1,0 +1,31 @@
+.card {
+  composes: box from "./common.module.css";
+  /* padding: 16px;
+  border-radius: 8px; */
+
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.salary {
+  color: green;
+}
+
+.active {
+  color: white;
+  background-color: green;
+  border-radius: 8px;
+  padding: 6px;
+}
+
+.inActive {
+  color: white;
+  background-color: red;
+  border-radius: 8px;
+  padding: 6px;
+}
