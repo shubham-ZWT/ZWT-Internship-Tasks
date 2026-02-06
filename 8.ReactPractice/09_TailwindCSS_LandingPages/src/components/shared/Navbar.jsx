@@ -30,7 +30,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          <button className="hidden sm:flex bg-[#0c192a] text-white px-5 py-2 rounded-full items-center gap-2">
+          <button className="hidden sm:flex bg-[#0c192a] text-white px-5 py-2 rounded-full items-center gap-2 cursor-pointer">
             Book now
             <HiOutlineArrowTopRightOnSquare />
           </button>
