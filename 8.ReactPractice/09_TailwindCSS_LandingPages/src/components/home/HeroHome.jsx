@@ -20,8 +20,9 @@ export default function HeroHome() {
             All In One Place
           </h3>
           <p className="max-w-2xl mt-4 text-sm md:text-base opacity-80">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Alias quis
-            autem eaque earum libero enim eveniet laudantium sapiente.
+            From world-class clay courts to expert-led coaching clinics, we
+            provide everything you need to elevate your game. Join a community
+            where passion meets performance.
           </p>
           <button className="mt-8 text-[#0c192a] text-lg px-8 py-3 rounded-full bg-white font-medium hover:bg-gray-100 transition-colors">
             Start your own journey

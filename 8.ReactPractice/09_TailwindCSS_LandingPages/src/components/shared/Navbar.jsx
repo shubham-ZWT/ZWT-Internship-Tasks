@@ -21,18 +21,12 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex flex-row gap-8 text-[#0c192a] font-medium">
-          <p className="cursor-pointer hover:text-blue-600 transition">
-            About Us
-          </p>
-          <p className="cursor-pointer hover:text-blue-600 transition">
-            Services
-          </p>
-          <p className="cursor-pointer hover:text-blue-600 transition">
-            Coaches
-          </p>
-          <p className="cursor-pointer hover:text-blue-600 transition">
-            Events
-          </p>
+          {["About Us", "Services", "Coaches", "Events"].map((path) => (
+            <p key={path} className="relative cursor-pointer group py-1">
+              <span>{path}</span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0c1a2c] transition-all duration-300 group-hover:w-full"></span>
+            </p>
+          ))}
         </div>
 
         <div className="flex items-center gap-4">
