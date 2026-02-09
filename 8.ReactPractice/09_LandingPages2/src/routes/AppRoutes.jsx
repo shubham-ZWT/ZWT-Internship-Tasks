@@ -1,21 +1,14 @@
-import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import Home from "../pages/Home";
 import AppLayout from "../layouts/AppLayout";
-import ErrorButton from "../pages/ErrorButton";
-import * as Sentry from "@sentry/react";
-
-// Wrap the standard Routes component
-const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
 
 export default function AppRoutes() {
   return (
-    <SentryRoutes>
+    <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/sentry-test" element={<ErrorButton />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
-    </SentryRoutes>
+    </Routes>
   );
 }
