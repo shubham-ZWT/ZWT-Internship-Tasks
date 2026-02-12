@@ -12,6 +12,7 @@ const { mkConfig, generateCsv, asString } = require("export-to-csv");
 const fs = require("fs");
 const buffer = require("buffer");
 const { error } = require("console");
+const { data } = require("autoprefixer");
 
 const csvConfig = mkConfig({ useKeysAsHeaders: true });
 
@@ -26,7 +27,7 @@ const PORT = 3000;
 
 //rate limiting implementation
 const limiter = rateLimit({
-  windowMs: 2 * 60 * 1000,
+  windowMs: 30 * 1000,
   max: 100,
   message: "Too many requests from this IP, please try again after 2 minutes",
 });
@@ -327,6 +328,19 @@ app.get("/api/departments", (req, res) => {
   });
 });
 
+app.post("/api/departments", (req, res) => {
+  const { deptName, location } = req.body;
+  const sql = "INSERT INTO departments (dept_name,location) VALUES (?,?)";
+  con.query(sql, [deptName, location], (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(result.insertId);
+      res.status(200).json({ success: true, id: result.insertId });
+    }
+  });
+});
+
 app.get("/api/departments/:id", (req, res) => {
   const id = req.params.id;
   const sql =
@@ -354,6 +368,52 @@ app.post("/api/login", (req, res) => {
     } else {
       console.log(result);
       res.status(200).json({ data: result, success: true });
+    }
+  });
+});
+
+// Dashboard Api's for React Capstone
+
+app.get("/api/dashboard", (req, res) => {
+  console.log("/dashboard");
+  const sql =
+    "SELECT projects.project_id, projects.project_name,projects.start_date, projects.end_date, (SELECT COUNT(id) FROM employee) AS Total_Employees, (SELECT COUNT(departments.dept_id) FROM departments) AS Total_Departments  FROM projects";
+
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.error(err);
+    } else {
+      res.status(200).json({ success: true, data: result });
+    }
+  });
+});
+
+app.get("/api/dashboard/departments", (req, res) => {
+  console.log("req received");
+  const sql =
+    "SELECT d.dept_id,d.dept_name,d.location,COUNT(e.id) AS Employee_per_Dept,AVG(e.salary) AS Average_Salary FROM departments d LEFT JOIN employee e ON e.dept_id = d.dept_id GROUP BY d.dept_id, d.dept_name, d.location ORDER BY d.dept_id";
+
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(result);
+      res.status(200).json({ success: true, data: result });
+    }
+  });
+});
+
+app.get("/api/dashboard/employees", (req, res) => {
+  console.log("/dashboard/employees");
+  const sql =
+    "SELECT employee.id, employee.first_name, employee.last_name, employee.email, employee.hire_date, employee.salary, (SELECT AVG(employee.salary) FROM employee) AS AVG_SALARY FROM employee";
+
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(result);
+      res.status(200).json({ success: true, data: result });
     }
   });
 });
