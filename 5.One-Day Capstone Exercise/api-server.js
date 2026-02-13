@@ -418,6 +418,34 @@ app.get("/api/dashboard/employees", (req, res) => {
   });
 });
 
+app.get("/api/employees/download", (req, res) => {
+  console.log("yaha hai");
+  const sql =
+    "SELECT employee.id,employee.first_name, employee.last_name, employee.email, employee.hire_date, employee.salary FROM employee";
+
+  con.query(sql, async (err, data) => {
+    if (err) {
+      console.error(err);
+    } else {
+      const rows = [...data][0];
+      console.log(rows);
+      const csv = generateCsv(csvConfig)(rows);
+      const filename = `${csvConfig.filename}.csv`;
+      const csvBuffer = new Uint8Array(Buffer.from(asString(csv)));
+
+      fs.writeFile(filename, csvBuffer, (err) => {
+        if (err) throw err;
+        console.log("file saved : ", filename);
+        const filePath = path.resolve(__dirname, filename);
+        console.log(filePath);
+        res.status(200).sendFile(filePath);
+      });
+
+      res.status(200).json({ success: true });
+    }
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server Started at http://localhost:${PORT}`);
 });

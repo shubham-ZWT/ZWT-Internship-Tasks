@@ -71,6 +71,12 @@ export default function Employees() {
       ? `${Math.round(filteredEmployees[0].AVG_SALARY).toLocaleString()}`
       : "$0";
 
+  const handelDownloadCSV = () => {
+    const response = employeeService.downloadCsv();
+    console.log(response);
+    console.log("handel Download CSV");
+  };
+
   return (
     <div className="flex flex-col p-4 text-app-text bg-app-bg">
       <div>
@@ -181,6 +187,14 @@ export default function Employees() {
                   )}
                 </tbody>
               </table>
+              <div className="pt-4">
+                <button
+                  className="bg-app-bg border dark:border-white px-4 py-1 rounded-xl"
+                  onClick={handelDownloadCSV}
+                >
+                  Download CSV
+                </button>
+              </div>
             </div>
 
             <DepartmentCard

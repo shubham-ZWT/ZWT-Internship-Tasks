@@ -12,6 +12,8 @@ export const employeeService = {
   updateEmployee: (id, data) => apiClient.put(`${EMPLOYEE_BASE}/${id}`, data),
 
   deleteEmployee: (id) => apiClient.delete(`${EMPLOYEE_BASE}/${id}`),
+
+  downloadCsv: ()=>apiClient.get(`${EMPLOYEE_BASE}/download`)
 };
 
 export default employeeService;
