@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-text: var(--color-text);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+}
+
+:root {
+  --color-bg: #ffffff;
+  --color-text: #1a1a1a;
+
+  --radius-sm: 20px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-pill: 9999px;
+
+  --shadow-sm:
+    0 2px 8px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+  --shadow-md:
+    0 8px 32px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+  --shadow-lg:
+    0 20px 60px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="organic"] {
+  --color-bg: #f5f1e8;
+  --color-text: #2f2a25;
+
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-pill: 9999px;
+
+  --shadow-sm:
+    0 8px 32px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  --shadow-md: none;
+  --shadow-lg: none;
+}
+
+[data-theme="sharp"] {
+  --color-bg: #2f2a25;
+  --color-text: #f5f1e8;
+
+  --radius-sm: 0px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-pill: 9999px;
+
+  --shadow-sm: 6px 6px 1px rgba(0, 0, 0, 1), inset 0 1px 0 rgba(255, 255, 255, 1);
+  --shadow-md: none;
+  --shadow-lg: none;
+}

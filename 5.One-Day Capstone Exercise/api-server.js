@@ -8,14 +8,17 @@ const rateLimit = require("express-rate-limit");
 // const redis = require("redis");
 const cors = require("cors");
 
-const { mkConfig, generateCsv, asString } = require("export-to-csv");
+const { mkConfig, generateCsv } = require("export-to-csv");
+
 const fs = require("fs");
 const buffer = require("buffer");
 const { error } = require("console");
 const { data } = require("autoprefixer");
 
-const csvConfig = mkConfig({ useKeysAsHeaders: true });
-
+const csvConfig = mkConfig({
+  useKeysAsHeaders: true,
+  useBom: true,
+});
 const app = express();
 const PORT = 3000;
 
@@ -122,11 +125,55 @@ app.get("/api/employees", async (req, res) => {
   });
 });
 
+app.get("/api/employees/download", (req, res) => {
+  console.log("CSV Request Received");
+
+  const sql =
+    "SELECT id, first_name, last_name, email, hire_date, salary FROM employee";
+
+  con.query(sql, (err, data) => {
+    if (err) {
+      console.error("Database Error:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    try {
+      
+      const sanitizedData = data.map((row) => ({
+        id: Number(row.id ?? 0),
+        first_name: row.first_name ?? "",
+        last_name: row.last_name ?? "",
+        email: row.email ?? "",
+        hire_date: row.hire_date
+          ? new Date(row.hire_date).toISOString().split("T")[0]
+          : "",
+        salary: Number(row.salary ?? 0),
+      }));
+
+      console.log("Sanitized Sample:", sanitizedData[0]);
+
+ 
+      const csv = generateCsv(csvConfig)(sanitizedData);
+
+      res.setHeader("Content-Type", "text/csv; charset=utf-8");
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=employees_report.csv",
+      );
+
+      return res.status(200).send(csv);
+    } catch (error) {
+      console.error("CSV Generation Error:", error);
+      return res.status(500).json({ error: "CSV generation failed" });
+    }
+  });
+});
+
 app.get("/api/employees/:id", (req, res) => {
   let id = req.params.id;
   console.log("req received");
   console.log(id);
-  // const user = client.get(id, redis.print);
+
 
   let sql = "select * from employee where id=?";
   con.query(sql, [Number(id)], (err, result) => {
@@ -139,25 +186,41 @@ app.get("/api/employees/:id", (req, res) => {
   });
 });
 
-app.post("/api/employees", (req, res) => {
-  console.log("req received");
-  let { first_name, last_name, email, hire_date, salary } = req.body;
-  console.log(first_name, last_name, email, hire_date, salary);
-  let sql =
-    "INSERT INTO employee (first_name, last_name, email, hire_date, salary) VALUES (?,?,?,?,?)";
-  con.query(
-    sql,
-    [first_name, last_name, email, hire_date, salary],
-    (err, result) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(result);
-        res.json({ message: `User Inserted`, success: true });
-      }
-    },
-  );
-});
+// app.get("/api/employees/download", (req, res) => {
+//   console.log("CSV Request Received");
+//   const sql = "SELECT id, first_name, last_name, email, salary FROM employee";
+
+//   con.query(sql, (err, data) => {
+//     if (err) {
+//       console.error("Database Error:", err);
+//       return res.status(500).json({ success: false, error: "Database error" });
+//     }
+
+//     try {
+//       // Generate CSV string in memory
+//       const csvData = generateCsv(csvConfig)(data);
+//       const csvString = asString(csvData);
+
+//       // Set headers for download
+//       res.setHeader("Content-Type", "text/csv");
+//       res.setHeader(
+//         "Content-Disposition",
+//         "attachment; filename=employees.csv",
+//       );
+
+//       console.log("Sending CSV string to client...");
+//       // Send directly without saving to disk
+//       return res.status(200).send(csvString);
+//     } catch (error) {
+//       console.error("CSV Gen Error:", error);
+//       if (!res.headersSent) {
+//         res
+//           .status(500)
+//           .json({ success: false, error: "CSV Generation failed" });
+//       }
+//     }
+//   });
+// });
 
 app.put("/api/employees/:id", (req, res) => {
   let id = req.params.id;
@@ -277,43 +340,53 @@ app.post("/api/employees/onboard", uploadSingle, (req, res) => {
 });
 
 //to get csv of users
-app.get("/users/csv", (req, res) => {
-  let sql = "CALL get_employees";
-  con.query(sql, async (err, data) => {
-    if (err) {
-      console.error(err);
-    } else {
-      const rows = [...data][0];
-      // const mockData = [
-      //   {
-      //     name: "Rouky",
-      //     date: "2023-09-01",
-      //     percentage: 0.4,
-      //     quoted: '"Pickles"',
-      //   },
-      //   {
-      //     name: "Keiko",
-      //     date: "2023-09-01",
-      //     percentage: 0.9,
-      //     quoted: '"Cactus"',
-      //   },
-      // ];
-      console.log(rows);
-      // console.log(mockData);
-      const csv = generateCsv(csvConfig)(rows);
-      const filename = `${csvConfig.filename}.csv`;
-      const csvBuffer = new Uint8Array(Buffer.from(asString(csv)));
+// app.get("/api/employees/download", (req, res) => {
+//   console.log("CSV Request Received");
 
-      fs.writeFile(filename, csvBuffer, (err) => {
-        if (err) throw err;
-        console.log("file saved : ", filename);
-        const filePath = path.resolve(__dirname, filename);
-        console.log(filePath);
-        res.status(200).sendFile(filePath);
-      });
-    }
-  });
-});
+//   const sql =
+//     "SELECT id, first_name, last_name, email, hire_date, salary FROM employee";
+
+//   con.query(sql, (err, data) => {
+//     if (err) {
+//       console.error("Database Error:", err);
+//       return res.status(500).json({ error: "Database error" });
+//     }
+
+//     try {
+//       const sanitizedData = data.map((row) => ({
+//         id: Number(row.id ?? 0),
+//         first_name: row.first_name ?? "",
+//         last_name: row.last_name ?? "",
+//         email: row.email ?? "",
+//         hire_date: row.hire_date
+//           ? new Date(row.hire_date).toISOString().split("T")[0]
+//           : "",
+//         salary: Number(row.salary ?? 0),
+//       }));
+
+//       console.log("Sanitized Sample:", sanitizedData[0]);
+
+//       const csvConfig = mkConfig({
+//         useKeysAsHeaders: true,
+//         useBom: true,
+//       });
+
+//       const csv = generateCsv(csvConfig)(sanitizedData);
+
+//       res.setHeader("Content-Type", "text/csv; charset=utf-8");
+//       res.setHeader(
+//         "Content-Disposition",
+//         "attachment; filename=employees_report.csv"
+//       );
+
+//       return res.status(200).send(csv);
+
+//     } catch (error) {
+//       console.error("CSV Generation Error:", error);
+//       return res.status(500).json({ error: "CSV generation failed" });
+//     }
+//   });
+// });
 
 app.get("/api/departments", (req, res) => {
   console.log("Department req ");
@@ -414,34 +487,6 @@ app.get("/api/dashboard/employees", (req, res) => {
     } else {
       console.log(result);
       res.status(200).json({ success: true, data: result });
-    }
-  });
-});
-
-app.get("/api/employees/download", (req, res) => {
-  console.log("yaha hai");
-  const sql =
-    "SELECT employee.id,employee.first_name, employee.last_name, employee.email, employee.hire_date, employee.salary FROM employee";
-
-  con.query(sql, async (err, data) => {
-    if (err) {
-      console.error(err);
-    } else {
-      const rows = [...data][0];
-      console.log(rows);
-      const csv = generateCsv(csvConfig)(rows);
-      const filename = `${csvConfig.filename}.csv`;
-      const csvBuffer = new Uint8Array(Buffer.from(asString(csv)));
-
-      fs.writeFile(filename, csvBuffer, (err) => {
-        if (err) throw err;
-        console.log("file saved : ", filename);
-        const filePath = path.resolve(__dirname, filename);
-        console.log(filePath);
-        res.status(200).sendFile(filePath);
-      });
-
-      res.status(200).json({ success: true });
     }
   });
 });

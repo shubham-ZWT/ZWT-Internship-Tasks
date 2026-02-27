@@ -2,6 +2,7 @@ const express = require("express");
 require("dotenv").config();
 const orderRoutes = require("./orders/orders.routes");
 const warehousesRoutes = require("./warehouses/warehouses.routes");
+const cors = require("cors");
 
 //app config
 const PORT = process.env.PORT;
@@ -10,6 +11,13 @@ const app = express();
 //Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 
 //Routes
 app.use("/api/orders", orderRoutes);

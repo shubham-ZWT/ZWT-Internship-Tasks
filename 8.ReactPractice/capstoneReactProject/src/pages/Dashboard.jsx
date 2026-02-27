@@ -36,20 +36,19 @@ export default function Dashboard() {
   if (loading) return <div>Loading...</div>;
   if (!isAuthenticated) return null;
 
-  
   const ProjectRow = ({ index, style }) => {
     const project = dashData[index];
     if (!project) return null;
 
     return (
       <div style={style} className="px-2 text-app-text bg-app-bg">
-        <div className="flex items-center justify-between p-4 bg-white dark:bg-black/40 border border-gray-200 rounded-lg shadow-sm hover:border-amber-500 transition-colors">
+        <div className="flex items-center justify-between p-4 bg-app-text  border text-app-bg border-gray-200 rounded-sm shadow-sm hover:border-amber-500 transition duration-300">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-amber-100 text-amber-600 rounded-full">
               <IoBriefcase size={20} />
             </div>
             <div>
-              <p className="font-bold text-gray-800 dark:text-app-text">{project.project_name}</p>
+              <p className="font-bold">{project.project_name}</p>
               <p className="text-xs text-gray-500">
                 Ends:{" "}
                 {project.end_date
@@ -68,7 +67,6 @@ export default function Dashboard() {
       <h1 className="text-4xl font-bold tracking-tighter">Dashboard</h1>
 
       <div className="flex flex-row pt-6 gap-6">
-    
         <div className="flex flex-col gap-4">
           <DepartmentCard
             name="Total Departments"
@@ -82,7 +80,6 @@ export default function Dashboard() {
           />
         </div>
 
-       
         <div className="flex flex-col flex-1">
           <h2 className="text-2xl tracking-tighter mb-4">Project Summary</h2>
 

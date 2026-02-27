@@ -10,8 +10,7 @@ import { useTheme } from "../hooks/useTheme";
 export default function Sidebar() {
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
-
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   const handelDashboard = () => {
     console.log("dash");
@@ -47,7 +46,7 @@ export default function Sidebar() {
             <button
               key={link.name}
               onClick={link.fun}
-              className="flex flex-row gap-2 px-5 py-1 rounded-2xl justify-center items-center hover:bg-gray-200 dark:hover:bg-black/80 transition-all 1000ms"
+              className="flex flex-row gap-2 px-5 py-1 rounded-sm hover:shadow-sm justify-center items-center hover:bg-app-text/10  transition-all 1000ms"
             >
               <span className="text-xl">{link.icon}</span>
               {link.name}
@@ -55,15 +54,34 @@ export default function Sidebar() {
           ))}
         </div>
 
-        <button
-          onClick={toggleTheme}
-          className="px-4 py-2 border rounded-md hover:opacity-80 bg-app-bg text-app-text"
-        >
-          Switch to {theme === "light" ? "Dark" : "Light"} Mode
-        </button>
+        <div className="flex flex-col gap-2 mt-4">
+          <button
+            onClick={() => setTheme("light")}
+            className={`px-4 py-2 rounded-sm border  duration-300
+      ${theme === "light" ? "bg-app-text text-app-bg shadow-sm " : ""}`}
+          >
+            Light
+          </button>
+
+          <button
+            onClick={() => setTheme("dark")}
+            className={`px-4 py-2 rounded-sm border transition duration-300
+      ${theme === "dark" ? "bg-app-text text-app-bg shadow-sm" : ""}`}
+          >
+            Dark
+          </button>
+
+          <button
+            onClick={() => setTheme("sharp")}
+            className={`px-4 py-2 rounded-sm border transition duration-300
+      ${theme === "sharp" ? "bg-app-text text-app-bg shadow-sm" : ""}`}
+          >
+            Sharp
+          </button>
+        </div>
         <div>
           <button
-            className="bg-red-600 px-5 py-1 rounded-2xl text-white font-semibold hover:bg-red-700 transition-all 1000ms"
+            className="bg-red-600 px-5 py-1 rounded-sm text-white font-semibold hover:bg-red-700 transition-all 300 shadow-sm"
             onClick={() => logout()}
           >
             Logout

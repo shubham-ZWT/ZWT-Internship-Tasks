@@ -70,31 +70,31 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse text-app-bg">
                 <thead>
                   <tr className="bg-gray-50 dark:bg-black/40 border-b border-gray-200">
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-app-text">
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider ">
                       Department Name
                     </th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-app-text">
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider ">
                       Location
                     </th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-app-text text-center">
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider  text-center">
                       Employees
                     </th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-app-text text-right">
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider  text-right">
                       Avg Salary
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 bg-white dark:bg-black/40">
+                <tbody className="divide-y divide-gray-200 bg-app-text  dark:bg-black/40 text-app-bg">
                   {stats.length > 0 ? (
                     filteredStats.map((s) => (
                       <tr
                         key={s.dept_name}
                         className="hover:bg-blue-50/50 transition-colors group"
                       >
-                        <td className="px-6 py-4 text-sm font-semibold text-app-text">
+                        <td className="px-6 py-4 text-sm font-semibold">
                           {s.dept_name}
                         </td>
                         <td className="px-6 py-4 text-sm">
@@ -102,20 +102,17 @@ export default function Dashboard() {
                             {s.location}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-app-text text-center">
+                        <td className="px-6 py-4 text-sm text-center">
                           {s.Employee_per_Dept}
                         </td>
-                        <td className="px-6 py-4 text-sm text-app-text font-mono text-right">
+                        <td className="px-6 py-4 text-sm font-mono text-right">
                           ${Math.round(s.Average_Salary).toLocaleString()}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td
-                        colSpan="4"
-                        className="px-6 py-12 text-center text-app-text"
-                      >
+                      <td colSpan="4" className="px-6 py-12 text-center">
                         <p className="text-lg">No matching departments found</p>
                       </td>
                     </tr>

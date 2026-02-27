@@ -71,10 +71,24 @@ export default function Employees() {
       ? `${Math.round(filteredEmployees[0].AVG_SALARY).toLocaleString()}`
       : "$0";
 
-  const handelDownloadCSV = () => {
-    const response = employeeService.downloadCsv();
-    console.log(response);
-    console.log("handel Download CSV");
+  const handelDownloadCSV = async () => {
+    try {
+      const response = await employeeService.downloadCsv();
+      const blob = new Blob([response.data], {
+        type: "text/csv;charset=utf-8;",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "employees.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) { 
+      console.error("Download failed:", error);
+      // If it's a timeout, you'll see it here
+    }
   };
 
   return (

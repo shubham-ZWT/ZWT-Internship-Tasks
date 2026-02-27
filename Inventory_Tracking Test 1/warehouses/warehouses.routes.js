@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const conn = require("../db/db.config");
-const { getStockforWarehouses } = require("./warehouses.controller");
+const { getStockforWarehouses,getAllWarehouses } = require("./warehouses.controller");
 
-router.post("/:id/stock", getStockforWarehouses);
+router.get("/:id/stock", getStockforWarehouses);
+router.get("/",getAllWarehouses)
 
 module.exports = router;

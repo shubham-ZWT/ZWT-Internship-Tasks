@@ -13,7 +13,12 @@ export const employeeService = {
 
   deleteEmployee: (id) => apiClient.delete(`${EMPLOYEE_BASE}/${id}`),
 
-  downloadCsv: ()=>apiClient.get(`${EMPLOYEE_BASE}/download`)
+  // Add responseType: 'blob' to handle binary/file data
+  downloadCsv: () =>
+    apiClient.get(`${EMPLOYEE_BASE}/download`, {
+      responseType: "blob",
+      timeout: 30000, // Increase to 30 seconds just for this call
+    }),
 };
 
 export default employeeService;

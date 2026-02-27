@@ -15,12 +15,24 @@ exports.getStockforWarehouses = (req, res) => {
   const warehouseID = req.params.id;
   console.log(`get data for warehouse id : ${warehouseID}`);
   let sql =
-    "SELECT products.product_name, warehouse_stock.quantity FROM warehouse_stock JOIN products ON products.product_id = warehouse_stock.product_id WHERE warehouse_stock.warehouse_id = ?";
-  const data = conn.query(sql, [warehouseID], (err, result) => {
+    "SELECT warehouses.warehouse_name, warehouses.location, products.product_id,products.price, products.product_name,products.sku, products.price, warehouse_stock.quantity FROM warehouse_stock JOIN products ON products.product_id = warehouse_stock.product_id JOIN warehouses ON warehouses.warehouse_id = warehouse_stock.warehouse_id WHERE warehouse_stock.warehouse_id = ?";
+  conn.query(sql, [warehouseID], (err, result) => {
     if (err) {
       console.error(err);
     } else {
       res.status(200).json({ warehouseID: warehouseID, stock: result });
+    }
+  });
+};
+
+exports.getAllWarehouses = (req, res) => {
+  const sql = "SELECT * FROM warehouses";
+  conn.query(sql, (err, result) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log(result);
+      res.status(200).json({ success: true, warehouses: result });
     }
   });
 };
