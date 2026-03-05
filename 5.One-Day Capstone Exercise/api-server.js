@@ -114,15 +114,30 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/employees", async (req, res) => {
-  console.log("req received");
-  let sql = "select * from employee";
-  con.query(sql, (err, result) => {
-    if (err) {
-      console.error(err);
-    } else {
-      res.status(200).json(result);
-    }
-  });
+  console.log("Request received for employees");
+  const searchTerm = req.query.decouncedSearch || "";
+
+  let sql = "SELECT * FROM employee";
+  let params = [];
+
+  if (searchTerm) {
+    sql += " WHERE first_name LIKE ?";
+    params.push(`%${searchTerm}%`);
+  }
+
+  try {
+    const results = await new Promise((resolve, reject) => {
+      con.query(sql, params, (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Database Error:", error);
+    res.status(500).json({ message: "Error fetching employees" });
+  }
 });
 
 app.get("/api/employees/download", (req, res) => {
@@ -138,7 +153,6 @@ app.get("/api/employees/download", (req, res) => {
     }
 
     try {
-      
       const sanitizedData = data.map((row) => ({
         id: Number(row.id ?? 0),
         first_name: row.first_name ?? "",
@@ -152,7 +166,6 @@ app.get("/api/employees/download", (req, res) => {
 
       console.log("Sanitized Sample:", sanitizedData[0]);
 
- 
       const csv = generateCsv(csvConfig)(sanitizedData);
 
       res.setHeader("Content-Type", "text/csv; charset=utf-8");
@@ -173,7 +186,6 @@ app.get("/api/employees/:id", (req, res) => {
   let id = req.params.id;
   console.log("req received");
   console.log(id);
-
 
   let sql = "select * from employee where id=?";
   con.query(sql, [Number(id)], (err, result) => {
