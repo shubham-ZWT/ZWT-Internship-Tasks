@@ -12,7 +12,12 @@ export default function Login() {
   return (
     <div>
       <h1>Login</h1>
-      <button onClick={handelLogin}>Login test</button>
+      <button
+        onClick={handelLogin}
+        className="border bg-gray-800 text-white px-3 py-1 rounded-lg "
+      >
+        Login test
+      </button>
     </div>
   );
 }

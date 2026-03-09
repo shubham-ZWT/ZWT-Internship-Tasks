@@ -114,16 +114,22 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/employees", async (req, res) => {
-  console.log("Request received for employees");
   const searchTerm = req.query.decouncedSearch || "";
+  const page = parseInt(req.query.page) || 1;
+  const limit = 3;
+  const offset = (page - 1) * limit;
 
   let sql = "SELECT * FROM employee";
   let params = [];
 
   if (searchTerm) {
-    sql += " WHERE first_name LIKE ?";
-    params.push(`%${searchTerm}%`);
+    sql += " WHERE first_name LIKE ? OR last_name LIKE ? OR email LIKE ?";
+    const likeVal = `%${searchTerm}%`;
+    params.push(likeVal, likeVal, likeVal);
   }
+
+  sql += " LIMIT ? OFFSET ?";
+  params.push(limit, offset);
 
   try {
     const results = await new Promise((resolve, reject) => {
@@ -133,10 +139,51 @@ app.get("/api/employees", async (req, res) => {
       });
     });
 
-    res.status(200).json(results);
+    const nextPage = results.length === limit ? page + 1 : undefined;
+
+    res.status(200).json({
+      employees: results,
+      nextPage: nextPage,
+    });
   } catch (error) {
     console.error("Database Error:", error);
     res.status(500).json({ message: "Error fetching employees" });
+  }
+});
+
+app.post("/api/employees", async (req, res) => {
+  const { first_name, last_name, email, hire_date, salary } = req.body;
+  console.log("request to create a user");
+
+  const sql = `
+    INSERT INTO employee (first_name, last_name, email, hire_date, salary) 
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  try {
+    const result = await new Promise((resolve, reject) => {
+      con.query(
+        sql,
+        [first_name, last_name, email, hire_date, salary],
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        },
+      );
+    });
+
+    // Return the newly created employee data
+    res.status(201).json({
+      id: result.insertId,
+      first_name,
+      last_name,
+      email,
+      hire_date,
+      salary,
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    res.status(500).json({ message: "Failed to create employee" });
   }
 });
 

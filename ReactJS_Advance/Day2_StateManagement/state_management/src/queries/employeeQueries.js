@@ -1,6 +1,5 @@
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import employeeService from "../services/employeeService";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const employeeKeys = {
   all: ["employees"],
@@ -10,33 +9,35 @@ export const employeeKeys = {
   detail: (id) => [...employeeKeys.details(), id],
 };
 
-// Hook for fetching the list
 export const useEmployees = (filters) => {
   return useQuery({
     queryKey: employeeKeys.list(filters),
     queryFn: () => employeeService.getAllEmployees(filters),
-    // data is only fetched if filters exist or as needed
   });
 };
 
-// Hook for a single employee
 export const useEmployee = (id) => {
   return useQuery({
     queryKey: employeeKeys.detail(id),
     queryFn: () => employeeService.getEmployeeById(id),
-    enabled: !!id, // Only run if ID is provided
+    enabled: !!id,
   });
 };
 
 //this is for the infinite feed scroll
-export const useEmployeeFeed = () => {
+export const useEmployeeFeed = (filters = {}) => {
   return useInfiniteQuery({
-    queryKey: ["employees", "feed"],
-    queryFn: ({ pageParam = 1 }) => employeeService.getEmployees(pageParam),
+    // 1. This MUST be an array: ['employees', 'list', { search: '' }]
+    queryKey: employeeKeys.list(filters),
+
+    // 2. Pass the context (which includes queryKey) to the service
+    queryFn: (context) => employeeService.getAllEmployees(context),
+
     initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
-      // If your API returns { data: [...], next: 2 }
-      return lastPage.next ?? undefined;
+
+    getNextPageParam: (lastPage) => {
+      // lastPage is what the backend returned: { employees: [...], nextPage: 2 }
+      return lastPage.nextPage;
     },
   });
 };

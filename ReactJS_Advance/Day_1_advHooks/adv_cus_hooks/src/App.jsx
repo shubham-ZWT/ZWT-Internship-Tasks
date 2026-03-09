@@ -8,6 +8,7 @@ import { useState } from "react";
 import { AccordionDemo } from "./components/AccordionDemo";
 import Dashboard from "./components/Dashboard";
 import ToastProvider from "./context/ToastProvider";
+import List from "./components/List";
 
 function App() {
   const [value, toggle] = useToggle(false);
@@ -55,7 +56,8 @@ function App() {
 
       <p>Debounced Value : {debouncedSearch}</p>
 
-      {/* use InfiniteScroll hook remaining */}
+      {/* use InfiniteScroll hook */}
+      <List />
 
       {/* Compound Component */}
       <AccordionDemo />

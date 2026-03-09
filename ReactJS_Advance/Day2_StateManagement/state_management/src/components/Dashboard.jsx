@@ -17,7 +17,12 @@ export default function Dashboard() {
   return (
     <div>
       <h1>Dashboard Accessed</h1>
-      <button onClick={() => logout()}>Logout</button>
+      <button
+        onClick={() => logout()}
+        className="border bg-gray-800 text-white px-3 py-1 rounded-lg"
+      >
+        Logout
+      </button>
     </div>
   );
 }

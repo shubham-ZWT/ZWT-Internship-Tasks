@@ -1,18 +1,25 @@
 import "./App.css";
-import Dashboard from "./components/Dashboard";
-import EmployeeList from "./components/EmployeeList";
-import Login from "./components/Login";
+import AppRoutes from "./AppRoutes";
+// import Dashboard from "./components/Dashboard";
+// import EmployeeList from "./components/EmployeeList";
+// import Login from "./components/Login";
+// import VirtualList from "./components/VirtualList";
 
 function App() {
   return (
     <>
-      <Login />
-      <Dashboard />
-
+      {/* <Login />
+      <Dashboard /> */}
       {/* Immer Remaining  */}
-
       {/* React Tanstack queries */}
-      <EmployeeList />
+      {/* <EmployeeList /> */}
+      {/* useCallback and ReactMemo in EmployeeList and NoRender */}
+
+      {/* Performace Optimization */}
+      {/* Virtual List */}
+      {/* <VirtualList /> */}
+
+      <AppRoutes />
     </>
   );
 }
