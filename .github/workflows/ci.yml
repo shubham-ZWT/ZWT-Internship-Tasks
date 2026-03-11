@@ -1,24 +1,33 @@
 name: React CI
-on: [push, pull_request]
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+
+defaults:
+  run:
+    working-directory: ReactJS_Advance/Final Capstone/Capstone-frontend
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./ReactJS_Advance/Day2_StateManagement/state_management
-
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "npm"
 
-          cache-dependency-path: ./ReactJS_Advance/Day2_StateManagement/state_management/package-lock.json
+      - name: Install Dependencies
+        run: npm install
 
-      - run: npm ci
-      - run: npm run lint
-      - run: npx vitest run
-      - run: npm run build
+      - name: Build Project
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
