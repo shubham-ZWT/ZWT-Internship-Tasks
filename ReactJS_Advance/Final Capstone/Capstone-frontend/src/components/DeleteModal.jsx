@@ -4,7 +4,6 @@ const DeleteModal = forwardRef(({ onDeleteConfirm }, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [target, setTarget] = useState({ id: null, name: "" });
 
-  // Expose functions to the parent
   useImperativeHandle(ref, () => ({
     open: (id, name) => {
       setTarget({id, name});

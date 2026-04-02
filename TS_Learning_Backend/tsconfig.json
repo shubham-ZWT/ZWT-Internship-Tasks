@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    /* File Layout - UNCOMMENT THESE */
+    "rootDir": "./src", // Where your TS files are
+    "outDir": "./dist", // Where compiled JS goes
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    /* Environment Settings */
+    "module": "NodeNext", // Best for modern Node.js
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
+    "lib": ["ESNext"], // Add this for modern JS features
+    "types": ["node"], // Add this so TS understands 'process', 'path', etc.
+
+    /* Stricter Typechecking */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitAny": true, // Force you to define types
+
+    /* Style & Safety */
+    "noUnusedLocals": true, // Clean code: errors on unused variables
+    "noUnusedParameters": true, // Errors on unused function parameters
+    "removeComments": true, // Smaller dist files
+
+    /* Interop */
+    "esModuleInterop": true, // Critical for importing Express (CommonJS) into TS
+    "forceConsistentCasingInFileNames": true,
+
+    /* Remove/Disable these for Backend */
+    // "jsx": "react-jsx",          // Not needed unless you use SSR with React
+
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"], // Only compile what's in src
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}
