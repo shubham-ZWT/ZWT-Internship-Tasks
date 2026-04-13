@@ -1,0 +1,35 @@
+services:
+  #Redis Instance
+  redis:
+    image: redis/redis-stack-server:latest
+    ports:
+      - "6379:6379"
+
+  api:
+    build: .
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    environment:
+      - PORT=3000
+      - REDIS_HOST=redis
+
+  worker:
+    build: .
+    command: npm run worker:email
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis

@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  STUDENT
+  TPO
+  ADMIN
+  HR
+}
+
+model College {
+  id        String    @id @default(uuid())
+  name      String
+  address   String?
+  city      String?
+  state     String?
+  country   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  tpos      Profile[]
+  batches   Batch[]
+}
+
+model Batch {
+  id         String    @id @default(uuid())
+  name       String
+  collegeId String
+  college   College   @relation(fields: [collegeId], references: [id])
+  inviteCode String   @unique @default(uuid())
+  isActive  Boolean   @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  students  Profile[]
+
+  @@index([collegeId])
+}
+
+model Profile {
+  id        String    @id @default(uuid())
+  userId    String   @unique
+  email     String
+  fullName  String?
+  phone    String?
+  role     Role      @default(STUDENT)
+  collegeId String?
+  college  College?  @relation(fields: [collegeId], references: [id])
+  batchId  String?
+  batch   Batch?   @relation(fields: [batchId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([collegeId])
+  @@index([batchId])
+}

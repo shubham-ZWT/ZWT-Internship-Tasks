@@ -1,0 +1,35 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+ 
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+enum AuthProvider {
+  GOOGLE
+  GITHUB
+}
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  email        String    @unique
+  name         String?
+  avatarUrl    String?
+  provider     AuthProvider
+  providerId   String    // Google sub / GitHub id (as string)
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([provider, providerId])  // same person can't link same provider twice
+  @@index([email])
+
+  @@map("users")  // ← maps to "users" table in Supabase
+}
+
+
